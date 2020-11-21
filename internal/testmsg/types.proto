@@ -1,0 +1,86 @@
+syntax = "proto2";
+
+package testmsg;
+
+option go_package = ".;testmsg";
+
+message Scalar {
+  optional double dbl = 1;
+  optional float flt = 2;
+  optional int32 i32 = 3;
+  optional int64 i64 = 4;
+  optional uint32 u32 = 5;
+  optional uint64 u64 = 6;
+  optional sint32 s32 = 7;
+  optional sint64 s64 = 8;
+  optional fixed32 f32 = 9;
+  optional fixed64 f64 = 10;
+  optional sfixed32 sf32 = 11;
+  optional sfixed64 sf64 = 12;
+  optional bool bool = 13;
+  optional string str = 14;
+  optional bytes byte = 15;
+
+  optional bool after = 32;
+}
+
+message Repeated {
+  repeated double dbl = 1;
+  repeated float flt = 2;
+  repeated int32 i32 = 3;
+  repeated int64 i64 = 4;
+  repeated uint32 u32 = 5;
+  repeated uint64 u64 = 6;
+  repeated sint32 s32 = 7;
+  repeated sint64 s64 = 8;
+  repeated fixed32 f32 = 9;
+  repeated fixed64 f64 = 10;
+  repeated sfixed32 sf32 = 11;
+  repeated sfixed64 sf64 = 12;
+  repeated bool bool = 13;
+  repeated string str = 14;
+  repeated bytes byte = 15;
+
+  optional bool after = 32;
+}
+
+message Packed {
+  repeated double dbl = 1 [packed=true];
+  repeated float flt = 2 [packed=true];
+  repeated int32 i32 = 3 [packed=true];
+  repeated int64 i64 = 4 [packed=true];
+  repeated uint32 u32 = 5 [packed=true];
+  repeated uint64 u64 = 6 [packed=true];
+  repeated sint32 s32 = 7 [packed=true];
+  repeated sint64 s64 = 8 [packed=true];
+  repeated fixed32 f32 = 9 [packed=true];
+  repeated fixed64 f64 = 10 [packed=true];
+  repeated sfixed32 sf32 = 11 [packed=true];
+  repeated sfixed64 sf64 = 12 [packed=true];
+  repeated bool bool = 13 [packed=true];
+  repeated string str = 14;
+  repeated bytes byte = 15;
+
+  optional bool after = 32;
+}
+
+message Parent {
+  optional Child child = 1;
+
+  optional bool after = 32;
+}
+
+message Child {
+  optional int64 number = 1;
+  repeated Grandchild grandchild = 2;
+  repeated int64 numbers = 3;
+
+  optional bool after = 32;
+}
+
+message Grandchild {
+  optional int64 number = 1;
+  repeated int64 numbers = 2 [packed=true];
+
+  optional bool after = 32;
+}
