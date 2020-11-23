@@ -115,3 +115,59 @@ func TestMessage_Message(t *testing.T) {
 
 	compare(t, p, parent)
 }
+
+func TestMessage_MessageData(t *testing.T) {
+	parent := &testmsg.Parent{
+		Child: &testmsg.Child{
+			Number:  proto.Int64(123),
+			Numbers: []int64{1, 2, 3, -4, -5, -6, 7, 8},
+			Grandchild: []*testmsg.Grandchild{
+				{
+					Number:  proto.Int64(111),
+					Numbers: []int64{-1, 2, -3, 4, -5, 6, -7, 8},
+				},
+				{
+					Number:  proto.Int64(-222),
+					Numbers: []int64{1, -2, 3, -4, 5, -6, 7, -8},
+				},
+			},
+			After: proto.Bool(true),
+		},
+		After: proto.Bool(true),
+	}
+
+	data, err := proto.Marshal(parent)
+	if err != nil {
+		t.Fatalf("unable to marshal: %v", err)
+	}
+
+	// decode
+	msg := New(data)
+	p := &testmsg.Parent{}
+
+	for msg.Scan() {
+		switch msg.FieldNumber() {
+		case 1:
+			d, err := msg.MessageData()
+			if err != nil {
+				t.Fatalf("unable to read message: %v", err)
+			}
+
+			p.Child = &testmsg.Child{}
+			err = proto.Unmarshal(d, p.Child)
+			if err != nil {
+				t.Fatalf("unable to unmarshal: %v", err)
+			}
+		case 32:
+			v, err := msg.Bool()
+			if err != nil {
+				t.Fatalf("unable to read: %v", err)
+			}
+			p.After = &v
+		default:
+			msg.Skip()
+		}
+	}
+
+	compare(t, p, parent)
+}

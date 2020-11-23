@@ -121,6 +121,17 @@ func (m *Message) Message() (*Message, error) {
 	return nm, nil
 }
 
+// MessageData returns the encoded data a message. This data can
+// then be decoded using conventional tools.
+func (m *Message) MessageData() ([]byte, error) {
+	l, err := m.packedLength()
+	if err != nil {
+		return nil, err
+	}
+
+	return m.data[m.index : m.index+l], nil
+}
+
 func (m *Message) packedLength() (int, error) {
 	l64, err := m.Varint64()
 	if err != nil {
