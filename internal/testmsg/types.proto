@@ -5,8 +5,8 @@ package testmsg;
 option go_package = ".;testmsg";
 
 message Scalar {
-  optional double dbl = 1;
-  optional float flt = 2;
+  optional float flt = 1;
+  optional double dbl = 2;
   optional int32 i32 = 3;
   optional int64 i64 = 4;
   optional uint32 u32 = 5;
@@ -25,8 +25,8 @@ message Scalar {
 }
 
 message Repeated {
-  repeated double dbl = 1;
-  repeated float flt = 2;
+  repeated float flt = 1;
+  repeated double dbl = 2;
   repeated int32 i32 = 3;
   repeated int64 i64 = 4;
   repeated uint32 u32 = 5;
@@ -45,8 +45,8 @@ message Repeated {
 }
 
 message Packed {
-  repeated double dbl = 1 [packed=true];
-  repeated float flt = 2 [packed=true];
+  repeated float flt = 1 [packed=true];
+  repeated double dbl = 2 [packed=true];
   repeated int32 i32 = 3 [packed=true];
   repeated int64 i64 = 4 [packed=true];
   repeated uint32 u32 = 5 [packed=true];
@@ -71,16 +71,16 @@ message Parent {
 }
 
 message Child {
-  optional int64 number = 1;
-  repeated Grandchild grandchild = 2;
-  repeated int64 numbers = 3;
+  optional int64 number = 100;
+  repeated Grandchild grandchild = 200;
+  repeated int64 numbers = 300;
 
-  optional bool after = 32;
+  optional bool after = 3200;
 }
 
 message Grandchild {
-  optional int64 number = 1;
-  repeated int64 numbers = 2 [packed=true];
+  optional int64 number = 1000;
+  repeated int64 numbers = 2000 [packed=true];
 
-  optional bool after = 32;
+  optional bool after = 32000;
 }

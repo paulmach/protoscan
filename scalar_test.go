@@ -15,6 +15,18 @@ func TestDecodeScalar_numbers(t *testing.T) {
 		message *testmsg.Scalar
 	}{
 		{
+			name:    "positive float",
+			message: &testmsg.Scalar{Flt: proto.Float32(123.4567)},
+		},
+		{
+			name:    "negative float",
+			message: &testmsg.Scalar{Flt: proto.Float32(-23.4567)},
+		},
+		{
+			name:    "zero float",
+			message: &testmsg.Scalar{Flt: proto.Float32(0)},
+		},
+		{
 			name:    "positive double",
 			message: &testmsg.Scalar{Dbl: proto.Float64(123.4567)},
 		},
@@ -27,17 +39,6 @@ func TestDecodeScalar_numbers(t *testing.T) {
 			message: &testmsg.Scalar{Dbl: proto.Float64(0)},
 		},
 		{
-			name:    "positive float",
-			message: &testmsg.Scalar{Flt: proto.Float32(123.4567)},
-		},
-		{
-			name:    "negative float",
-			message: &testmsg.Scalar{Flt: proto.Float32(-23.4567)},
-		},
-		{
-			name:    "zero float",
-			message: &testmsg.Scalar{Flt: proto.Float32(0)},
-		}, {
 			name:    "float and double",
 			message: &testmsg.Scalar{Dbl: proto.Float64(123.4567), Flt: proto.Float32(34)},
 		},
@@ -297,14 +298,14 @@ func TestDecodeScalar_skip(t *testing.T) {
 		message *testmsg.Scalar
 	}{
 		{
-			name:    "skip double",
+			name:    "skip float",
 			skip:    1,
-			message: &testmsg.Scalar{Dbl: proto.Float64(1.5), After: proto.Bool(true)},
+			message: &testmsg.Scalar{Flt: proto.Float32(1.5), After: proto.Bool(true)},
 		},
 		{
-			name:    "skip float",
+			name:    "skip double",
 			skip:    2,
-			message: &testmsg.Scalar{Flt: proto.Float32(1.5), After: proto.Bool(true)},
+			message: &testmsg.Scalar{Dbl: proto.Float64(1.5), After: proto.Bool(true)},
 		},
 		{
 			name:    "skip int32",
@@ -407,17 +408,17 @@ func decodeScalar(t testing.TB, data []byte, skip int) *testmsg.Scalar {
 
 		switch msg.FieldNumber() {
 		case 1:
-			v, err := msg.Double()
-			if err != nil {
-				t.Fatalf("unable to read double: %v", err)
-			}
-			s.Dbl = &v
-		case 2:
 			v, err := msg.Float()
 			if err != nil {
 				t.Fatalf("unable to read float: %v", err)
 			}
 			s.Flt = &v
+		case 2:
+			v, err := msg.Double()
+			if err != nil {
+				t.Fatalf("unable to read double: %v", err)
+			}
+			s.Dbl = &v
 		case 3:
 			v, err := msg.Int32()
 			if err != nil {

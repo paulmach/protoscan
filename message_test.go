@@ -47,13 +47,13 @@ func TestMessage_Message(t *testing.T) {
 			p.Child = &testmsg.Child{}
 			for cmsg.Scan() {
 				switch cmsg.FieldNumber() {
-				case 1:
+				case 100:
 					v, err := cmsg.Int64()
 					if err != nil {
 						t.Fatalf("unable to read: %v", err)
 					}
 					p.Child.Number = &v
-				case 2:
+				case 200:
 					gcmsg, err := cmsg.Message()
 					if err != nil {
 						t.Fatalf("unable to read: %v", err)
@@ -62,19 +62,19 @@ func TestMessage_Message(t *testing.T) {
 					gc := &testmsg.Grandchild{}
 					for gcmsg.Scan() {
 						switch gcmsg.FieldNumber() {
-						case 1:
+						case 1000:
 							v, err := gcmsg.Int64()
 							if err != nil {
 								t.Fatalf("unable to read: %v", err)
 							}
 							gc.Number = &v
-						case 2:
+						case 2000:
 							v, err := gcmsg.RepeatedInt64(gc.Numbers)
 							if err != nil {
 								t.Fatalf("unable to read: %v", err)
 							}
 							gc.Numbers = v
-						case 32:
+						case 32000:
 							v, err := gcmsg.Bool()
 							if err != nil {
 								t.Fatalf("unable to read: %v", err)
@@ -86,13 +86,13 @@ func TestMessage_Message(t *testing.T) {
 					}
 
 					p.Child.Grandchild = append(p.Child.Grandchild, gc)
-				case 3:
+				case 300:
 					v, err := cmsg.RepeatedInt64(p.Child.Numbers)
 					if err != nil {
 						t.Fatalf("unable to read: %v", err)
 					}
 					p.Child.Numbers = v
-				case 32:
+				case 3200:
 					v, err := cmsg.Bool()
 					if err != nil {
 						t.Fatalf("unable to read: %v", err)

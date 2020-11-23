@@ -15,18 +15,18 @@ func TestDecodeRepeated_packable(t *testing.T) {
 		message *testmsg.Repeated
 	}{
 		{
-			name: "double",
+			name: "float",
 			skip: 1,
 			message: &testmsg.Repeated{
-				Dbl:   []float64{1, 1.5, 2, 2.5, -3, -3.5},
+				Flt:   []float32{1, 1.5, 2, 2.5, -3, -3.5},
 				After: proto.Bool(true),
 			},
 		},
 		{
-			name: "float",
+			name: "double",
 			skip: 2,
 			message: &testmsg.Repeated{
-				Flt:   []float32{1, 1.5, 2, 2.5, -3, -3.5},
+				Dbl:   []float64{1, 1.5, 2, 2.5, -3, -3.5},
 				After: proto.Bool(true),
 			},
 		},
@@ -307,17 +307,17 @@ func decodeRepeated(t *testing.T, data []byte, skip int) *testmsg.Repeated {
 
 		switch msg.FieldNumber() {
 		case 1:
-			v, err := msg.RepeatedDouble(r.Dbl)
-			if err != nil {
-				t.Fatalf("unable to read: %v", err)
-			}
-			r.Dbl = v
-		case 2:
 			v, err := msg.RepeatedFloat(r.Flt)
 			if err != nil {
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.Flt = v
+		case 2:
+			v, err := msg.RepeatedDouble(r.Dbl)
+			if err != nil {
+				t.Fatalf("unable to read: %v", err)
+			}
+			r.Dbl = v
 		case 3:
 			v, err := msg.RepeatedInt32(r.I32)
 			if err != nil {
