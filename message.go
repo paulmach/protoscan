@@ -6,6 +6,7 @@ import (
 )
 
 //go:generate protoc --go_out=internal/testmsg internal/testmsg/types.proto
+//go:generate go run internal/gen_repeated.go
 
 // ErrIntOverflow is returned when scanning an integer with varint encoding and the
 // value is too long for the integer type.
@@ -142,4 +143,15 @@ func (m *Message) packedLength() (int, error) {
 	}
 
 	return l, nil
+}
+
+func (m *Message) count(l int) int {
+	var count int
+	for _, b := range m.data[m.index : m.index+l] {
+		if b < 128 {
+			count++
+		}
+	}
+
+	return count
 }
