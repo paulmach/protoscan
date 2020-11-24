@@ -395,5 +395,9 @@ func decodeRepeated(t *testing.T, data []byte, skip int) *testmsg.Repeated {
 		}
 	}
 
+	if err := msg.Err(); err != nil {
+		t.Fatalf("scanning error: %v", err)
+	}
+
 	return r
 }

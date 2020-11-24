@@ -114,7 +114,7 @@ func (m *Message) Float() (float32, error) {
 
 // Int32 reads a variable-length encoding of up to 4 bytes. This field type is
 // best used if the field only has positive numbers, otherwise use sint32.
-// Note, this field can also by read as an Int64. TODO: test
+// Note, this field can also by read as an Int64.
 func (m *Message) Int32() (int32, error) {
 	v, err := m.Varint64()
 	if err != nil {

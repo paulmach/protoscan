@@ -3,6 +3,7 @@ package protoscan
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"testing"
 
 	"github.com/paulmach/protoscan/internal/testmsg"
@@ -396,6 +397,77 @@ func TestDecodeScalar_skip(t *testing.T) {
 	}
 }
 
+func TestMessage_Varint32(t *testing.T) {
+	t.Run("overflow", func(t *testing.T) {
+		msg := New([]byte{230, 230, 230, 230, 230, 230})
+		_, err := msg.Varint32()
+		if err != ErrIntOverflow {
+			t.Errorf("wrong error: %v", err)
+		}
+	})
+
+	t.Run("end of input", func(t *testing.T) {
+		msg := New([]byte{230, 230})
+		_, err := msg.Varint32()
+		if err != io.ErrUnexpectedEOF {
+			t.Errorf("wrong error: %v", err)
+		}
+	})
+}
+
+func TestMessage_Varint64(t *testing.T) {
+	t.Run("overflow", func(t *testing.T) {
+		msg := New([]byte{230, 230, 230, 230, 230, 230, 230, 230, 230, 230})
+		_, err := msg.Varint64()
+		if err != ErrIntOverflow {
+			t.Errorf("wrong error: %v", err)
+		}
+	})
+
+	t.Run("end of input", func(t *testing.T) {
+		msg := New([]byte{230, 230})
+		_, err := msg.Varint64()
+		if err != io.ErrUnexpectedEOF {
+			t.Errorf("wrong error: %v", err)
+		}
+	})
+}
+
+func TestMessage_Int32(t *testing.T) {
+	// tests reading an int32 field as an int64
+	message := &testmsg.Scalar{
+		I32: proto.Int32(1_234_567),
+	}
+
+	data, err := proto.Marshal(message)
+	if err != nil {
+		t.Fatalf("unable to marshal: %v", err)
+	}
+
+	r := &testmsg.Scalar{}
+	proto.Unmarshal(data, r)
+
+	msg := New(data)
+
+	var val int64
+	for msg.Scan() {
+		if msg.FieldNumber() == 3 {
+			v, err := msg.Int64()
+			if err != nil {
+				t.Fatalf("unable to read: %v", err)
+			}
+
+			val = v
+		} else {
+			msg.Skip()
+		}
+	}
+
+	if val != 1_234_567 {
+		t.Errorf("incorrect value: %d != %d", val, 1_234_567)
+	}
+}
+
 func decodeScalar(t testing.TB, data []byte, skip int) *testmsg.Scalar {
 	msg := New(data)
 
@@ -508,6 +580,10 @@ func decodeScalar(t testing.TB, data []byte, skip int) *testmsg.Scalar {
 		}
 	}
 
+	if err := msg.Err(); err != nil {
+		t.Fatalf("scanning error: %v", err)
+	}
+
 	return s
 }
 
@@ -574,5 +650,33 @@ func BenchmarkScalar_protoscan(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		decodeScalar(b, data, 0)
+	}
+}
+
+func BenchmarkVarint32(b *testing.B) {
+	m := &Message{
+		data:   []byte{200, 199, 198, 6, 0, 0, 0, 0},
+		index:  0,
+		length: 8,
+	}
+
+	// test it out
+	v, err := m.Varint32()
+	if err != nil {
+		b.Fatal(err)
+	}
+	if v != 13738952 {
+		b.Fatalf("incorrect value %v != 13738952", v)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		m.index = 0
+		_, err := m.Varint32()
+		if err != nil {
+			b.Fatal(err)
+		}
 	}
 }
