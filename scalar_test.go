@@ -654,11 +654,7 @@ func BenchmarkScalar_protoscan(b *testing.B) {
 }
 
 func BenchmarkVarint32(b *testing.B) {
-	m := &Message{
-		data:   []byte{200, 199, 198, 6, 0, 0, 0, 0},
-		index:  0,
-		length: 8,
-	}
+	m := New([]byte{200, 199, 198, 6, 0, 0, 0, 0})
 
 	// test it out
 	v, err := m.Varint32()

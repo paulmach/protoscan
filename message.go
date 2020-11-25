@@ -26,12 +26,16 @@ const (
 	WireType32bit           = 5
 )
 
+// base has all the methods for reading packable fields (the numbers) so they
+// can be shared between message and iterator.
+type base struct {
+	data  []byte
+	index int
+}
+
 // Message is a container for a protobuf message type that is ready for scanning.
 type Message struct {
-	data   []byte
-	index  int
-	length int
-
+	base
 	err error
 
 	fieldNumber int
@@ -41,15 +45,16 @@ type Message struct {
 // New creates a new Message scanner for the given encoded protobuf data.
 func New(data []byte) *Message {
 	return &Message{
-		data:   data,
-		index:  0,
-		length: len(data),
+		base: base{
+			data:  data,
+			index: 0,
+		},
 	}
 }
 
 // Scan will move the scanner to the next value.
 func (m *Message) Scan() bool {
-	if m.index < m.length {
+	if m.index < len(m.data) {
 		val, err := m.Varint64()
 		if err != nil {
 			m.err = err
@@ -70,7 +75,7 @@ func (m *Message) Err() error {
 }
 
 // FieldNumber returns the number for the current value being scanned.
-// These numbers are defined in in the protobuf definition file used to encode the message.
+// These numbers are defined in the protobuf definition file used to encode the message.
 func (m *Message) FieldNumber() int {
 	return m.fieldNumber
 }
@@ -88,7 +93,7 @@ func (m *Message) Skip() error {
 		_, err := m.Varint64()
 		return err
 	case WireType64bit:
-		if m.length <= m.index+8 {
+		if len(m.data) <= m.index+8 {
 			return io.ErrUnexpectedEOF
 		}
 		m.index += 8
@@ -99,7 +104,7 @@ func (m *Message) Skip() error {
 		}
 		m.index += l
 	case WireType32bit:
-		if m.length <= m.index+4 {
+		if len(m.data) <= m.index+4 {
 			return io.ErrUnexpectedEOF
 		}
 		m.index += 4
@@ -149,7 +154,7 @@ func (m *Message) packedLength() (int, error) {
 		return 0, ErrInvalidLength
 	}
 
-	if m.length < postIndex {
+	if len(m.data) < postIndex {
 		return 0, io.ErrUnexpectedEOF
 	}
 
