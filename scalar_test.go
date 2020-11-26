@@ -676,3 +676,51 @@ func BenchmarkVarint32(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkInt64(b *testing.B) {
+	m := New([]byte{200, 199, 198, 6, 0, 0, 0, 0})
+
+	// test it out
+	v, err := m.Int64()
+	if err != nil {
+		b.Fatal(err)
+	}
+	if v != 13738952 {
+		b.Fatalf("incorrect value %v != 13738952", v)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		m.index = 0
+		_, err := m.Int64()
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkBool(b *testing.B) {
+	m := New([]byte{1, 0, 1, 0, 0, 0, 0, 0})
+
+	// test it out
+	v, err := m.Bool()
+	if err != nil {
+		b.Fatal(err)
+	}
+	if !v {
+		b.Fatalf("incorrect bool")
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		m.index = 0
+		_, err := m.Bool()
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
