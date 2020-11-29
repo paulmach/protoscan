@@ -43,8 +43,8 @@ func (m *Message) Repeated%[1]s(buf []%[2]s) ([]%[2]s, error) {
 `
 
 var types = [][]string{
-	{"Double", "float64", "WireType64bit", "l/8"},
 	{"Float", "float32", "WireType32bit", "l/4"},
+	{"Double", "float64", "WireType64bit", "l/8"},
 	{"Int32", "int32", "WireTypeVarint", "m.count(l)"},
 	{"Int64", "int64", "WireTypeVarint", "m.count(l)"},
 	{"Uint32", "uint32", "WireTypeVarint", "m.count(l)"},
@@ -59,7 +59,7 @@ var types = [][]string{
 }
 
 func main() {
-	f, err := os.OpenFile("repeated.go", os.O_WRONLY, 0644)
+	f, err := os.Create("repeated.go")
 	if err != nil {
 		panic(err)
 	}

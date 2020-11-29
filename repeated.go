@@ -2,41 +2,6 @@
 
 package protoscan
 
-// RepeatedDouble will append the repeated value(s) to the buffer.
-// This method supports packed or unpacked encoding.
-func (m *Message) RepeatedDouble(buf []float64) ([]float64, error) {
-	if m.wireType == WireType64bit {
-		v, err := m.Double()
-		if err != nil {
-			return nil, err
-		}
-
-		return append(buf, v), nil
-	}
-
-	l, err := m.packedLength()
-	if err != nil {
-		return nil, err
-	}
-
-	// if provided we append.
-	if buf == nil {
-		buf = make([]float64, 0, l/8)
-	}
-
-	postIndex := m.index + l
-	for m.index < postIndex {
-		v, err := m.Double()
-		if err != nil {
-			return nil, err
-		}
-
-		buf = append(buf, v)
-	}
-
-	return buf, nil
-}
-
 // RepeatedFloat will append the repeated value(s) to the buffer.
 // This method supports packed or unpacked encoding.
 func (m *Message) RepeatedFloat(buf []float32) ([]float32, error) {
@@ -62,6 +27,41 @@ func (m *Message) RepeatedFloat(buf []float32) ([]float32, error) {
 	postIndex := m.index + l
 	for m.index < postIndex {
 		v, err := m.Float()
+		if err != nil {
+			return nil, err
+		}
+
+		buf = append(buf, v)
+	}
+
+	return buf, nil
+}
+
+// RepeatedDouble will append the repeated value(s) to the buffer.
+// This method supports packed or unpacked encoding.
+func (m *Message) RepeatedDouble(buf []float64) ([]float64, error) {
+	if m.wireType == WireType64bit {
+		v, err := m.Double()
+		if err != nil {
+			return nil, err
+		}
+
+		return append(buf, v), nil
+	}
+
+	l, err := m.packedLength()
+	if err != nil {
+		return nil, err
+	}
+
+	// if provided we append.
+	if buf == nil {
+		buf = make([]float64, 0, l/8)
+	}
+
+	postIndex := m.index + l
+	for m.index < postIndex {
+		v, err := m.Double()
 		if err != nil {
 			return nil, err
 		}
