@@ -197,9 +197,9 @@ func TestMessage_MessageData(t *testing.T) {
 					Numbers: []int64{1, -2, 3, -4, 5, -6, 7, -8},
 				},
 			},
-			After: proto.Bool(true),
+			After: proto.Bool(false),
 		},
-		After: proto.Bool(true),
+		After: proto.Bool(false),
 	}
 
 	data, err := proto.Marshal(parent)
@@ -231,7 +231,7 @@ func TestMessage_MessageData(t *testing.T) {
 				}
 				p.After = &v
 			default:
-				msg.Skip()
+				t.Fatalf("no skips in this message: field number %d", msg.FieldNumber())
 			}
 		}
 

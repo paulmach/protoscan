@@ -134,7 +134,14 @@ func (m *Message) MessageData() ([]byte, error) {
 		return nil, err
 	}
 
-	return m.data[m.index : m.index+l], nil
+	postIndex := m.index + l
+	if len(m.data) < postIndex {
+		return nil, io.ErrUnexpectedEOF
+	}
+
+	d := m.data[m.index:postIndex]
+	m.index = postIndex
+	return d, nil
 }
 
 func (m *Message) packedLength() (int, error) {
