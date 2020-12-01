@@ -55,19 +55,24 @@ func (b *base) Varint32() (uint32, error) {
 
 func varint32(data []byte, index int) (int, uint32, error) {
 	var val uint32
-	for shift := uint(0); ; shift += 7 {
-		if shift >= 32 {
-			return index, 0, ErrIntOverflow
-		}
-		if len(data) <= index {
-			return index, 0, io.ErrUnexpectedEOF
-		}
-		d := data[index]
-		index++
-		val |= uint32(d&0x7F) << shift
-		if d < 0x80 {
-			break
-		}
+
+	// go versions at least <= 1.15 will not inline functions with
+	// for loops. https://github.com/golang/go/issues/14768
+	// for shift := uint(0); ; shift += 7 {
+	shift := uint(0)
+loop:
+	if shift >= 32 {
+		return index, 0, ErrIntOverflow
+	}
+	if len(data) <= index {
+		return index, 0, io.ErrUnexpectedEOF
+	}
+	d := data[index]
+	index++
+	val |= uint32(d&0x7F) << shift
+	if d >= 0x80 {
+		shift += 7
+		goto loop
 	}
 
 	return index, val, nil
@@ -84,19 +89,23 @@ func (b *base) Varint64() (uint64, error) {
 
 func varint64(data []byte, index int) (int, uint64, error) {
 	var val uint64
-	for shift := uint(0); ; shift += 7 {
-		if shift >= 64 {
-			return 0, 0, ErrIntOverflow
-		}
-		if len(data) <= index {
-			return 0, 0, io.ErrUnexpectedEOF
-		}
-		d := data[index]
-		index++
-		val |= uint64(d&0x7F) << shift
-		if d < 0x80 {
-			break
-		}
+	// go versions at least <= 1.15 will not inline functions with
+	// for loops. https://github.com/golang/go/issues/14768
+	// for shift := uint(0); ; shift += 7 {
+	shift := uint(0)
+loop:
+	if shift >= 64 {
+		return 0, 0, ErrIntOverflow
+	}
+	if len(data) <= index {
+		return 0, 0, io.ErrUnexpectedEOF
+	}
+	d := data[index]
+	index++
+	val |= uint64(d&0x7F) << shift
+	if d >= 0x80 {
+		shift += 7
+		goto loop
 	}
 
 	return index, val, nil
