@@ -229,7 +229,7 @@ func TestDecodeRepeated_string(t *testing.T) {
 		msg := New(data)
 
 		strs := []string{}
-		for msg.Scan() {
+		for msg.Next() {
 			if msg.FieldNumber() == 14 {
 				s, err := msg.String()
 				if err != nil {
@@ -252,7 +252,7 @@ func TestDecodeRepeated_string(t *testing.T) {
 		msg := New(data)
 
 		var found bool
-		for msg.Scan() {
+		for msg.Next() {
 			if msg.FieldNumber() == 32 {
 				v, err := msg.Bool()
 				if err != nil {
@@ -290,7 +290,7 @@ func TestDecodeRepeated_bytes(t *testing.T) {
 		msg := New(data)
 
 		bytes := [][]byte{}
-		for msg.Scan() {
+		for msg.Next() {
 			if msg.FieldNumber() == 15 {
 				b, err := msg.Bytes()
 				if err != nil {
@@ -313,7 +313,7 @@ func TestDecodeRepeated_bytes(t *testing.T) {
 		msg := New(data)
 
 		var found bool
-		for msg.Scan() {
+		for msg.Next() {
 			if msg.FieldNumber() == 32 {
 				v, err := msg.Bool()
 				if err != nil {
@@ -350,7 +350,7 @@ func decodeRepeated(t *testing.T, data []byte, skip int) *testmsg.Repeated {
 	msg := New(data)
 
 	r := &testmsg.Repeated{}
-	for msg.Scan() {
+	for msg.Next() {
 		if msg.FieldNumber() == skip {
 			msg.Skip()
 			continue

@@ -36,7 +36,7 @@ func TestMessage_Message(t *testing.T) {
 		msg := New(data)
 		p := &testmsg.Parent{}
 
-		for msg.Scan() {
+		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 1:
 				cmsg, err := msg.Message()
@@ -45,7 +45,7 @@ func TestMessage_Message(t *testing.T) {
 				}
 
 				p.Child = &testmsg.Child{}
-				for cmsg.Scan() {
+				for cmsg.Next() {
 					switch cmsg.FieldNumber() {
 					case 100:
 						v, err := cmsg.Int64()
@@ -60,7 +60,7 @@ func TestMessage_Message(t *testing.T) {
 						}
 
 						gc := &testmsg.Grandchild{}
-						for gcmsg.Scan() {
+						for gcmsg.Next() {
 							switch gcmsg.FieldNumber() {
 							case 1000:
 								v, err := gcmsg.Int64()
@@ -124,7 +124,7 @@ func TestMessage_Message(t *testing.T) {
 		msg := New(data)
 		p := &testmsg.Parent{}
 
-		for msg.Scan() {
+		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 1:
 				_, err := msg.Message()
@@ -157,7 +157,7 @@ func TestMessage_Message(t *testing.T) {
 		msg := New(data)
 		p := &testmsg.Parent{}
 
-		for msg.Scan() {
+		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 1:
 				msg.Skip()
@@ -211,7 +211,7 @@ func TestMessage_MessageData(t *testing.T) {
 		msg := New(data)
 		p := &testmsg.Parent{}
 
-		for msg.Scan() {
+		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 1:
 				d, err := msg.MessageData()
@@ -254,7 +254,7 @@ func TestMessage_Reset(t *testing.T) {
 	msg := New(data)
 
 	s := &testmsg.Scalar{}
-	for msg.Scan() {
+	for msg.Next() {
 		switch msg.FieldNumber() {
 		case 1:
 			if v := msg.WireType(); v != WireType32bit {
@@ -276,7 +276,7 @@ func TestMessage_Reset(t *testing.T) {
 	msg.Reset(nil)
 
 	s = &testmsg.Scalar{}
-	for msg.Scan() {
+	for msg.Next() {
 		switch msg.FieldNumber() {
 		case 1:
 			v, err := msg.Float()
@@ -301,7 +301,7 @@ func TestMessage_Reset(t *testing.T) {
 	msg.Reset(data2)
 
 	s = &testmsg.Scalar{}
-	for msg.Scan() {
+	for msg.Next() {
 		switch msg.FieldNumber() {
 		case 1:
 			v, err := msg.Float()

@@ -52,8 +52,17 @@ func New(data []byte) *Message {
 	}
 }
 
-// Scan will move the scanner to the next value.
-func (m *Message) Scan() bool {
+// Next will move the scanner to the next value. This function should be used in a for loop.
+//
+//  for msg.Next() {
+//    switch msg.FieldNumber() {
+//    case 1:
+//      v, err := msg.Float()
+//    default:
+//      msg.Skip()
+//    }
+//  }
+func (m *Message) Next() bool {
 	if m.index < len(m.data) {
 		val, err := m.Varint64()
 		if err != nil {

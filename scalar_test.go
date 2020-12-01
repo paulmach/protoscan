@@ -450,7 +450,7 @@ func TestMessage_Int32(t *testing.T) {
 	msg := New(data)
 
 	var val int64
-	for msg.Scan() {
+	for msg.Next() {
 		if msg.FieldNumber() == 3 {
 			v, err := msg.Int64()
 			if err != nil {
@@ -472,7 +472,7 @@ func decodeScalar(t testing.TB, data []byte, skip int) *testmsg.Scalar {
 	msg := New(data)
 
 	s := &testmsg.Scalar{}
-	for msg.Scan() {
+	for msg.Next() {
 		if msg.FieldNumber() == skip {
 			msg.Skip()
 			continue

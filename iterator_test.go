@@ -189,7 +189,7 @@ func decodeIterator(t *testing.T, data []byte, skip int) *testmsg.Packed {
 	msg := New(data)
 
 	p := &testmsg.Packed{}
-	for msg.Scan() {
+	for msg.Next() {
 		if msg.FieldNumber() == skip {
 			msg.Skip()
 			continue
@@ -414,7 +414,7 @@ func BenchmarkRepeatedInt64(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		msg.index = 0
-		for msg.Scan() {
+		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 4:
 				_, err := msg.RepeatedInt64(nil)
@@ -447,7 +447,7 @@ func BenchmarkInterateInt64(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		msg.index = 0
-		for msg.Scan() {
+		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 4:
 				var err error
