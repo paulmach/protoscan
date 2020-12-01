@@ -161,6 +161,17 @@ func (m *Message) packedLength() (int, error) {
 	return l, nil
 }
 
+func (b *base) countAll() int {
+	var count int
+	for _, b := range b.data {
+		if b < 128 {
+			count++
+		}
+	}
+
+	return count
+}
+
 func (m *Message) count(l int) int {
 	var count int
 	for _, b := range m.data[m.index : m.index+l] {
