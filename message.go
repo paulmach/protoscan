@@ -144,6 +144,18 @@ func (m *Message) MessageData() ([]byte, error) {
 	return d, nil
 }
 
+// Reset will set the index to 0 so the message can be read again.
+// Optionally pass in new data to reuse the Message object.
+func (m *Message) Reset(newData []byte) {
+	if newData != nil {
+		m.data = newData
+	}
+	m.err = nil
+	m.index = 0
+	m.fieldNumber = 0
+	m.wireType = 0
+}
+
 func (m *Message) packedLength() (int, error) {
 	l64, err := m.Varint64()
 	if err != nil {

@@ -242,3 +242,76 @@ func TestMessage_MessageData(t *testing.T) {
 		compare(t, p, parent)
 	})
 }
+
+func TestMessage_Reset(t *testing.T) {
+	message1 := &testmsg.Scalar{Flt: proto.Float32(123.4567)}
+
+	data, err := proto.Marshal(message1)
+	if err != nil {
+		t.Fatalf("unable to marshal: %v", err)
+	}
+
+	msg := New(data)
+
+	s := &testmsg.Scalar{}
+	for msg.Scan() {
+		switch msg.FieldNumber() {
+		case 1:
+			if v := msg.WireType(); v != WireType32bit {
+				t.Errorf("incorrect wiretype: %v", v)
+			}
+
+			v, err := msg.Float()
+			if err != nil {
+				t.Fatalf("unable to read float: %v", err)
+			}
+			s.Flt = &v
+		default:
+			msg.Skip()
+		}
+	}
+	compare(t, s, message1)
+
+	// Reset
+	msg.Reset(nil)
+
+	s = &testmsg.Scalar{}
+	for msg.Scan() {
+		switch msg.FieldNumber() {
+		case 1:
+			v, err := msg.Float()
+			if err != nil {
+				t.Fatalf("unable to read float: %v", err)
+			}
+			s.Flt = &v
+		default:
+			msg.Skip()
+		}
+	}
+	compare(t, s, message1)
+
+	// Reset with new data
+	message2 := &testmsg.Scalar{Flt: proto.Float32(55.555)}
+
+	data2, err := proto.Marshal(message2)
+	if err != nil {
+		t.Fatalf("unable to marshal: %v", err)
+	}
+
+	msg.Reset(data2)
+
+	s = &testmsg.Scalar{}
+	for msg.Scan() {
+		switch msg.FieldNumber() {
+		case 1:
+			v, err := msg.Float()
+			if err != nil {
+				t.Fatalf("unable to read float: %v", err)
+			}
+			s.Flt = &v
+		default:
+			msg.Skip()
+		}
+	}
+	compare(t, s, message2)
+}
