@@ -84,3 +84,22 @@ message Grandchild {
 
   optional bool after = 32000;
 }
+
+message Customer {
+  required int64 id = 1;
+  optional string username = 2;
+
+  repeated Order orders = 3;
+  repeated int64 favorite_ids = 4 [packed=true];
+}
+
+message Order {
+  required int64 id = 1;
+  required bool open = 2;
+  repeated Item items = 3;
+}
+
+message Item {
+  required int64 id = 1;
+  // a big object
+}
