@@ -1,4 +1,4 @@
-protoscan [![CI](https://github.com/paulmach/protoscan/workflows/CI/badge.svg)](https://github.com/paulmach/protoscan/actions?query=workflow%3ACI+event%3Apush) [![Go Report Card](https://goreportcard.com/badge/github.com/paulmach/protoscan)](https://goreportcard.com/report/github.com/paulmach/protoscan) [![Godoc Reference](https://godoc.org/github.com/paulmach/protoscan?status.svg)](https://godoc.org/github.com/paulmach/protoscan)
+protoscan [![CI](https://github.com/paulmach/protoscan/workflows/CI/badge.svg)](https://github.com/paulmach/protoscan/actions?query=workflow%3ACI+event%3Apush) [![codecov](https://codecov.io/gh/paulmach/protoscan/branch/master/graph/badge.svg?token=NuuTjLVpKW)](https://codecov.io/gh/paulmach/protoscan) [![Go Report Card](https://goreportcard.com/badge/github.com/paulmach/protoscan)](https://goreportcard.com/report/github.com/paulmach/protoscan) [![Godoc Reference](https://godoc.org/github.com/paulmach/protoscan?status.svg)](https://godoc.org/github.com/paulmach/protoscan)
 =========
 
 Package `protoscan` is a low-level reader for
@@ -80,7 +80,7 @@ For repeated fields there is a corresponding set of functions like
 `RepeatedInt64(buf []int64) ([]int64, error)`. Repeated fields may or may not be packed so you
 should pass in a pre-created buffer variable when calling. For example
 
-```
+``` go
 var ids []int64
 
 msg := protoscan.New(encodedData)

@@ -31,4 +31,9 @@ jobs:
           golint .
 
       - name: Run tests
-        run: go test -v ./...
+        run: go test -v -coverprofile=profile.cov ./...
+
+      - name: codecov
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./profile.cov
