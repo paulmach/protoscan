@@ -63,6 +63,9 @@ func New(data []byte) *Message {
 //    }
 //  }
 func (m *Message) Next() bool {
+	if m.err != nil {
+		return false
+	}
 	if m.index < len(m.data) {
 		val, err := m.Varint64()
 		if err != nil {
@@ -96,30 +99,30 @@ func (m *Message) WireType() int {
 
 // Skip will move the scanner past the current value if it is not needed.
 // If a value is not parsed this method must be called to move the decoder past the value.
-func (m *Message) Skip() error {
+func (m *Message) Skip() {
 	switch m.wireType {
 	case WireTypeVarint:
-		_, err := m.Varint64()
-		return err
+		_, m.err = m.Varint64()
 	case WireType64bit:
 		if len(m.data) <= m.index+8 {
-			return io.ErrUnexpectedEOF
+			m.err = io.ErrUnexpectedEOF
+			return
 		}
 		m.index += 8
 	case WireTypeLengthDelimited:
 		l, err := m.packedLength()
 		if err != nil {
-			return err
+			m.err = err
+			return
 		}
 		m.index += l
 	case WireType32bit:
 		if len(m.data) <= m.index+4 {
-			return io.ErrUnexpectedEOF
+			m.err = io.ErrUnexpectedEOF
+			return
 		}
 		m.index += 4
 	}
-
-	return nil
 }
 
 // Message will return a pointer to an embedded message that can then
@@ -166,7 +169,9 @@ func (m *Message) Reset(newData []byte) {
 }
 
 func (m *Message) packedLength() (int, error) {
-	l64, err := m.Varint64()
+	var err error
+	var l64 uint64
+	m.index, l64, err = varint64(m.data, m.index)
 	if err != nil {
 		return 0, err
 	}
@@ -187,17 +192,6 @@ func (m *Message) packedLength() (int, error) {
 	}
 
 	return l, nil
-}
-
-func (b *base) countAll() int {
-	var count int
-	for _, b := range b.data {
-		if b < 128 {
-			count++
-		}
-	}
-
-	return count
 }
 
 func (m *Message) count(l int) int {

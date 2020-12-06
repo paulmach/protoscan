@@ -1,6 +1,7 @@
 package protoscan
 
 import (
+	"io"
 	"testing"
 
 	"github.com/paulmach/protoscan/internal/testmsg"
@@ -182,6 +183,63 @@ func TestMessage_Message(t *testing.T) {
 	})
 }
 
+func TestMessage_Next(t *testing.T) {
+	// read err should be false and set error
+	msg := New([]byte{201, 200, 200, 200, 200, 200, 200, 200, 200, 200})
+
+	if msg.Next() {
+		t.Errorf("should be false on if error")
+	}
+
+	if err := msg.Err(); err != ErrIntOverflow {
+		t.Errorf("incorrect error: %v", err)
+	}
+}
+
+func TestMessage_Skip(t *testing.T) {
+	// error with wire type 1, 64 bit
+	msg := New([]byte{0x10 | WireType64bit, 0x05})
+
+	msg.Next()
+	msg.Skip()
+
+	if msg.Next() {
+		t.Errorf("should be false on if error")
+	}
+
+	if err := msg.Err(); err != io.ErrUnexpectedEOF {
+		t.Errorf("incorrect error: %v", err)
+	}
+
+	// error with wire type 2, length delimited
+	msg.Reset([]byte{0x10 | WireTypeLengthDelimited, 0x85, 0x04})
+
+	msg.Next()
+	msg.Skip()
+
+	if msg.Next() {
+		t.Errorf("should be false on if error")
+	}
+
+	if err := msg.Err(); err != io.ErrUnexpectedEOF {
+		t.Errorf("incorrect error: %v", err)
+	}
+
+	// error with wire type 5, 32 bit
+	msg.Reset([]byte{0x10 | WireType32bit, 0x85, 0x04})
+
+	msg.Next()
+	msg.Skip()
+
+	if msg.Next() {
+		t.Errorf("should be false on if error")
+	}
+
+	if err := msg.Err(); err != io.ErrUnexpectedEOF {
+		t.Errorf("incorrect error: %v", err)
+	}
+}
+
 func TestMessage_MessageData(t *testing.T) {
 	parent := &testmsg.Parent{
 		Child: &testmsg.Child{
@@ -240,6 +298,15 @@ func TestMessage_MessageData(t *testing.T) {
 		}
 
 		compare(t, p, parent)
+	})
+
+	t.Run("invalid packed length", func(t *testing.T) {
+		msg := New([]byte{200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200})
+		_, err := msg.MessageData()
+
+		if err != ErrIntOverflow {
+			t.Errorf("incorrect error: %v", err)
+		}
 	})
 }
 

@@ -60,7 +60,14 @@ func (i *Iterator) Count(wireType int) int {
 		return len(i.base.data) / 8
 	}
 	if wireType == WireTypeVarint {
-		return i.base.countAll()
+		var count int
+		for _, b := range i.data {
+			if b < 128 {
+				count++
+			}
+		}
+
+		return count
 	}
 
 	panic("invalid wire type for a packed repeated field")
