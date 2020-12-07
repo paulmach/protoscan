@@ -1,7 +1,5 @@
 package protoscan
 
-import "io"
-
 // An Iterator allows for moving across a packed repeated field
 // in a 'controlled' fashion.
 type Iterator struct {
@@ -18,12 +16,6 @@ func (m *Message) Iterator(iter *Iterator) (*Iterator, error) {
 	l, err := m.packedLength()
 	if err != nil {
 		return nil, err
-	}
-
-	postIndex := m.index + l
-	if len(m.data) < postIndex {
-		// length provided is longer than the provided data.
-		return nil, io.ErrUnexpectedEOF
 	}
 
 	if iter == nil {

@@ -1,6 +1,8 @@
 package protoscan
 
 import (
+	"io"
+	"log"
 	"reflect"
 	"testing"
 
@@ -127,7 +129,7 @@ func TestDecodeRepeated_packable(t *testing.T) {
 				t.Fatalf("unable to marshal: %v", err)
 			}
 
-			v := decodeRepeated(t, data, 0)
+			v, _ := decodeRepeated(t, data, 0, false)
 			compare(t, v, tc.message)
 		})
 
@@ -137,7 +139,7 @@ func TestDecodeRepeated_packable(t *testing.T) {
 				t.Fatalf("unable to marshal: %v", err)
 			}
 
-			v := decodeRepeated(t, data, tc.skip)
+			v, _ := decodeRepeated(t, data, tc.skip, false)
 			compare(t, v, &testmsg.Scalar{After: proto.Bool(true)})
 		})
 
@@ -147,7 +149,7 @@ func TestDecodeRepeated_packable(t *testing.T) {
 				t.Fatalf("unable to marshal: %v", err)
 			}
 
-			v := decodeRepeated(t, data, 0)
+			v, _ := decodeRepeated(t, data, 0, false)
 			compare(t, v, tc.message)
 		})
 
@@ -157,7 +159,7 @@ func TestDecodeRepeated_packable(t *testing.T) {
 				t.Fatalf("unable to marshal: %v", err)
 			}
 
-			v := decodeRepeated(t, data, tc.skip)
+			v, _ := decodeRepeated(t, data, tc.skip, false)
 			compare(t, v, &testmsg.Scalar{After: proto.Bool(true)})
 		})
 
@@ -167,7 +169,7 @@ func TestDecodeRepeated_packable(t *testing.T) {
 				t.Fatalf("unable to marshal: %v", err)
 			}
 
-			v := decodeRepeated(t, data, 0)
+			v, _ := decodeRepeated(t, data, 0, false)
 			if len(v.Flt) != cap(v.Flt) {
 				t.Errorf("incorrect counts: %v != %v", len(v.Flt), cap(v.Flt))
 			}
@@ -209,6 +211,29 @@ func TestDecodeRepeated_packable(t *testing.T) {
 			}
 			if len(v.Byte) != cap(v.Byte) {
 				t.Errorf("incorrect counts: %v != %v", len(v.Byte), cap(v.Byte))
+			}
+		})
+
+		t.Run("errors "+tc.name, func(t *testing.T) {
+			data1, err := proto.Marshal(tc.message)
+			if err != nil {
+				t.Fatalf("unable to marshal: %v", err)
+			}
+
+			r, err := decodeRepeated(t, data1[:1], 0, true)
+			if err != io.ErrUnexpectedEOF {
+				log.Printf("%v", r)
+				t.Errorf("incorrect error: %v", err)
+			}
+
+			data2, err := proto.Marshal(repeatedToPacked(tc.message))
+			if err != nil {
+				t.Fatalf("unable to marshal: %v", err)
+			}
+
+			_, err = decodeRepeated(t, data2[:2], 0, true)
+			if err != io.ErrUnexpectedEOF {
+				t.Errorf("incorrect error: %v", err)
 			}
 		})
 	}
@@ -346,7 +371,7 @@ func repeatedToPacked(r *testmsg.Repeated) *testmsg.Packed {
 	}
 }
 
-func decodeRepeated(t *testing.T, data []byte, skip int) *testmsg.Repeated {
+func decodeRepeated(t *testing.T, data []byte, skip int, returnErr bool) (*testmsg.Repeated, error) {
 	msg := New(data)
 
 	r := &testmsg.Repeated{}
@@ -360,78 +385,117 @@ func decodeRepeated(t *testing.T, data []byte, skip int) *testmsg.Repeated {
 		case 1:
 			v, err := msg.RepeatedFloat(r.Flt)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.Flt = v
 		case 2:
 			v, err := msg.RepeatedDouble(r.Dbl)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.Dbl = v
 		case 3:
 			v, err := msg.RepeatedInt32(r.I32)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.I32 = v
 		case 4:
 			v, err := msg.RepeatedInt64(r.I64)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.I64 = v
 		case 5:
 			v, err := msg.RepeatedUint32(r.U32)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.U32 = v
 		case 6:
 			v, err := msg.RepeatedUint64(r.U64)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.U64 = v
 		case 7:
 			v, err := msg.RepeatedSint32(r.S32)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.S32 = v
 		case 8:
 			v, err := msg.RepeatedSint64(r.S64)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.S64 = v
 		case 9:
 			v, err := msg.RepeatedFixed32(r.F32)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.F32 = v
 		case 10:
 			v, err := msg.RepeatedFixed64(r.F64)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.F64 = v
 		case 11:
 			v, err := msg.RepeatedSfixed32(r.Sf32)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.Sf32 = v
 		case 12:
 			v, err := msg.RepeatedSfixed64(r.Sf64)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.Sf64 = v
 		case 13:
 			v, err := msg.RepeatedBool(r.Bool)
 			if err != nil {
+				if returnErr {
+					return nil, err
+				}
 				t.Fatalf("unable to read: %v", err)
 			}
 			r.Bool = v
@@ -450,5 +514,5 @@ func decodeRepeated(t *testing.T, data []byte, skip int) *testmsg.Repeated {
 		t.Fatalf("scanning error: %v", err)
 	}
 
-	return r
+	return r, nil
 }

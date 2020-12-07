@@ -184,6 +184,9 @@ func (b *base) Sint64() (int64, error) {
 
 // Bool is encoded as 0x01 or 0x00 plus the field+type prefix byte. 2 bytes total.
 func (b *base) Bool() (bool, error) {
+	if len(b.data) <= b.index {
+		return false, io.ErrUnexpectedEOF
+	}
 	if d := b.data[b.index]; d&0x80 == 0 {
 		b.index++
 		return d == 1, nil

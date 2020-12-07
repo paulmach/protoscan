@@ -1,6 +1,7 @@
 package protoscan
 
 import (
+	"io"
 	"testing"
 
 	"github.com/paulmach/protoscan/internal/testmsg"
@@ -182,6 +183,50 @@ func TestInterator(t *testing.T) {
 				t.Errorf("incorrect counts: %v != %v", len(v.Byte), cap(v.Byte))
 			}
 		})
+	}
+}
+
+func TestIterator_errors(t *testing.T) {
+	message := &testmsg.Packed{
+		I64: make([]int64, 4000),
+	}
+	data, err := proto.Marshal(message)
+	if err != nil {
+		t.Fatalf("unable to marshal: %v", err)
+	}
+
+	msg := New(data[:2])
+	if !msg.Next() {
+		t.Fatalf("next is false?")
+	}
+
+	_, err = msg.Iterator(nil)
+	if err != io.ErrUnexpectedEOF {
+		t.Fatalf("incorrect error: %v", err)
+	}
+}
+
+func TestIterator_FieldNumber(t *testing.T) {
+	message := &testmsg.Packed{
+		I64: make([]int64, 4000),
+	}
+	data, err := proto.Marshal(message)
+	if err != nil {
+		t.Fatalf("unable to marshal: %v", err)
+	}
+
+	msg := New(data)
+	if !msg.Next() {
+		t.Fatalf("next is false?")
+	}
+
+	iter, err := msg.Iterator(nil)
+	if err != nil {
+		t.Fatalf("error getting iterator: %v", err)
+	}
+
+	if v := iter.FieldNumber(); v != 4 {
+		t.Errorf("incorrect field number: %v", v)
 	}
 }
 
