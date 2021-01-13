@@ -126,16 +126,22 @@ func (m *Message) Skip() {
 }
 
 // Message will return a pointer to an embedded message that can then
-// be scanned in kind of a recursive fashion.
-func (m *Message) Message() (*Message, error) {
+// be scanned in kind of a recursive fashion. Will reuse the provided
+// Message object if provided.
+func (m *Message) Message(msg *Message) (*Message, error) {
 	l, err := m.packedLength()
 	if err != nil {
 		return nil, err
 	}
 
-	nm := New(m.data[m.index : m.index+l])
+	if msg == nil {
+		msg = New(m.data[m.index : m.index+l])
+	} else {
+		msg.Reset(m.data[m.index : m.index+l])
+	}
+
 	m.index += l
-	return nm, nil
+	return msg, nil
 }
 
 // MessageData returns the encoded data a message. This data can

@@ -40,7 +40,7 @@ func TestMessage_Message(t *testing.T) {
 		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 1:
-				cmsg, err := msg.Message()
+				cmsg, err := msg.Message(nil)
 				if err != nil {
 					t.Fatalf("unable to read message: %v", err)
 				}
@@ -55,7 +55,7 @@ func TestMessage_Message(t *testing.T) {
 						}
 						p.Child.Number = &v
 					case 200:
-						gcmsg, err := cmsg.Message()
+						gcmsg, err := cmsg.Message(nil)
 						if err != nil {
 							t.Fatalf("unable to read: %v", err)
 						}
@@ -128,7 +128,7 @@ func TestMessage_Message(t *testing.T) {
 		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 1:
-				_, err := msg.Message()
+				_, err := msg.Message(nil)
 				if err != nil {
 					t.Fatalf("unable to read message: %v", err)
 				}
