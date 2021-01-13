@@ -39,18 +39,38 @@ func (i *Iterator) HasNext() bool {
 	return i.base.index < len(i.base.data)
 }
 
+// Skip will move the interator forward 'count' value(s) without actually reading it.
+// Must provide the correct wireType. For a new iteractor 'count' will move the
+// pointer so the next value call with be the 'counth' value.
+// double, float, fixed, sfixed are WireType32bit or WireType64bit,
+// all others int, uint, sint types are WireTypeVarint.
+// The function will panic for any other value.
+func (i *Iterator) Skip(wireType int, count int) {
+	if wireType == WireTypeVarint {
+		for j := 0; j < count; j++ {
+			for i.data[i.index] >= 128 {
+				i.index++
+			}
+			i.index++
+		}
+		return
+	} else if wireType == WireType32bit {
+		i.index += 4 * count
+		return
+	} else if wireType == WireType64bit {
+		i.index += 8 * count
+		return
+	}
+
+	panic("invalid wire type for a packed repeated field")
+}
+
 // Count returns the total number of values in this repeated field.
 // The answer depends on the type/encoding or the field:
 // double, float, fixed, sfixed are WireType32bit or WireType64bit,
 // all others int, uint, sint types are WireTypeVarint.
 // The function will panic for any other value.
 func (i *Iterator) Count(wireType int) int {
-	if wireType == WireType32bit {
-		return len(i.base.data) / 4
-	}
-	if wireType == WireType64bit {
-		return len(i.base.data) / 8
-	}
 	if wireType == WireTypeVarint {
 		var count int
 		for _, b := range i.data {
@@ -60,6 +80,12 @@ func (i *Iterator) Count(wireType int) int {
 		}
 
 		return count
+	}
+	if wireType == WireType32bit {
+		return len(i.base.data) / 4
+	}
+	if wireType == WireType64bit {
+		return len(i.base.data) / 8
 	}
 
 	panic("invalid wire type for a packed repeated field")
