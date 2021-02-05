@@ -13,12 +13,12 @@ This library can help decoding performance in two ways:
 2. decoding directly into specific types or perform other transformations, the extra state
    can be skipped by manually decoding into the types directly.
 
-Please be aware that to decode entire message it is still faster to use
-[gogoprotobuf](https://github.com/gogo/protobuf). After must testing I think this is due
+Please be aware that to decode an entire message it is still faster to use
+[gogoprotobuf](https://github.com/gogo/protobuf). After much testing I think this is due
 to the generated code inlining almost all code to eliminate the function call overhead.
 
 **Warning:** Writing code with this library is like writing the auto-generated protobuf
-decoder and is very time consuming. It should only be used for specific use cases and
+decoder and is very time-consuming. It should only be used for specific use cases and
 for stable protobuf definitions.
 
 ## Usage
@@ -77,7 +77,7 @@ There is an accessor for each one the protobuf
 [scalar value types](https://developers.google.com/protocol-buffers/docs/proto#scalar).
 
 For repeated fields there is a corresponding set of functions like
-`RepeatedInt64(buf []int64) ([]int64, error)`. Repeated fields may or may not be packed so you
+`RepeatedInt64(buf []int64) ([]int64, error)`. Repeated fields may or may not be packed, so you
 should pass in a pre-created buffer variable when calling. For example
 
 ``` go
@@ -104,11 +104,11 @@ if msg.Err() != nil {
 If the ids are 'packed', `RepeatedInt64()` will be called once. If the ids are simply repeated
 `RepeatedInt64()` will be called N times, but the resulting array of ids will be the same.
 
-For more control over the values in a packed, repeated field use a Iterator. See above for an example.
+For more control over the values in a packed, repeated field use an Iterator. See above for an example.
 
 ### Decoding Embedded Messages
 
-Embedded messages can be handled recursively or the raw data can be returned and decoded
+Embedded messages can be handled recursively, or the raw data can be returned and decoded
 using a standard/auto-generated `proto.Unmarshal` function.
 
 ``` go

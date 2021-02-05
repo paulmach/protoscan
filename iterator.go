@@ -40,7 +40,7 @@ func (i *Iterator) HasNext() bool {
 }
 
 // Skip will move the interator forward 'count' value(s) without actually reading it.
-// Must provide the correct wireType. For a new iteractor 'count' will move the
+// Must provide the correct wireType. For a new iterator 'count' will move the
 // pointer so the next value call with be the 'counth' value.
 // double, float, fixed, sfixed are WireType32bit or WireType64bit,
 // all others int, uint, sint types are WireTypeVarint.

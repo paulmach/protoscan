@@ -11,7 +11,7 @@ import (
 )
 
 func TestDecodeScalar_numbers(t *testing.T) {
-	tescases := []struct {
+	cases := []struct {
 		name    string
 		message *testmsg.Scalar
 	}{
@@ -174,7 +174,7 @@ func TestDecodeScalar_numbers(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tescases {
+	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			data, err := proto.Marshal(tc.message)
 			if err != nil {
@@ -188,7 +188,7 @@ func TestDecodeScalar_numbers(t *testing.T) {
 }
 
 func TestDecodeScalar_bool(t *testing.T) {
-	tescases := []struct {
+	cases := []struct {
 		name    string
 		message *testmsg.Scalar
 	}{
@@ -206,7 +206,7 @@ func TestDecodeScalar_bool(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tescases {
+	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			data, err := proto.Marshal(tc.message)
 			if err != nil {
@@ -223,7 +223,7 @@ func TestDecodeScalar_bool(t *testing.T) {
 }
 
 func TestDecodeScalar_string(t *testing.T) {
-	tescases := []struct {
+	cases := []struct {
 		name    string
 		message *testmsg.Scalar
 	}{
@@ -241,7 +241,7 @@ func TestDecodeScalar_string(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tescases {
+	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			data, err := proto.Marshal(tc.message)
 			if err != nil {
@@ -258,7 +258,7 @@ func TestDecodeScalar_string(t *testing.T) {
 }
 
 func TestDecodeScalar_bytes(t *testing.T) {
-	tescases := []struct {
+	cases := []struct {
 		name    string
 		message *testmsg.Scalar
 	}{
@@ -276,7 +276,7 @@ func TestDecodeScalar_bytes(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tescases {
+	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			data, err := proto.Marshal(tc.message)
 			if err != nil {
@@ -293,7 +293,7 @@ func TestDecodeScalar_bytes(t *testing.T) {
 }
 
 func TestDecodeScalar_skip(t *testing.T) {
-	tescases := []struct {
+	cases := []struct {
 		name    string
 		skip    int
 		message *testmsg.Scalar
@@ -381,7 +381,7 @@ func TestDecodeScalar_skip(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tescases {
+	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			data, err := proto.Marshal(tc.message)
 			if err != nil {

@@ -9,7 +9,7 @@ import (
 )
 
 func TestInterator(t *testing.T) {
-	tescases := []struct {
+	cases := []struct {
 		name    string
 		skip    int
 		message *testmsg.Packed
@@ -112,7 +112,7 @@ func TestInterator(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tescases {
+	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			data, err := proto.Marshal(tc.message)
 			if err != nil {
@@ -589,7 +589,7 @@ func BenchmarkRepeatedInt64(b *testing.B) {
 	}
 }
 
-func BenchmarkInterateInt64(b *testing.B) {
+func BenchmarkIterateInt64(b *testing.B) {
 	items := []int64{}
 	for i := 0; i < 100; i++ {
 		items = append(items, int64(50*i))
@@ -632,7 +632,7 @@ func BenchmarkInterateInt64(b *testing.B) {
 	}
 }
 
-func BenchmarkInterateSkip_single(b *testing.B) {
+func BenchmarkIterateSkip_single(b *testing.B) {
 	items := []int64{}
 	for i := 0; i < 100; i++ {
 		items = append(items, int64(50*i))
@@ -672,7 +672,7 @@ func BenchmarkInterateSkip_single(b *testing.B) {
 	}
 }
 
-func BenchmarkInterateSkip_all(b *testing.B) {
+func BenchmarkIterateSkip_all(b *testing.B) {
 	items := []int64{}
 	for i := 0; i < 100; i++ {
 		items = append(items, int64(50*i))
@@ -700,7 +700,7 @@ func BenchmarkInterateSkip_all(b *testing.B) {
 					b.Fatalf("unable to create iterator: %v", err)
 				}
 
-				// to match InterateInt64 benchmark
+				// to match IterateInt64 benchmark
 				c := iter.Count(WireTypeVarint)
 				_ = make([]int64, 0, c)
 				iter.Skip(WireTypeVarint, c)

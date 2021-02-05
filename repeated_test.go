@@ -11,7 +11,7 @@ import (
 )
 
 func TestDecodeRepeated_packable(t *testing.T) {
-	tescases := []struct {
+	cases := []struct {
 		name    string
 		skip    int
 		message *testmsg.Repeated
@@ -122,7 +122,7 @@ func TestDecodeRepeated_packable(t *testing.T) {
 		},
 	}
 
-	for _, tc := range tescases {
+	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
 			data, err := proto.Marshal(tc.message)
 			if err != nil {
