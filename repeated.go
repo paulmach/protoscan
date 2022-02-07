@@ -24,8 +24,8 @@ func (m *Message) RepeatedFloat(buf []float32) ([]float32, error) {
 		buf = make([]float32, 0, l/4)
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Float()
 		if err != nil {
 			return nil, err
@@ -59,8 +59,8 @@ func (m *Message) RepeatedDouble(buf []float64) ([]float64, error) {
 		buf = make([]float64, 0, l/8)
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Double()
 		if err != nil {
 			return nil, err
@@ -94,8 +94,8 @@ func (m *Message) RepeatedInt32(buf []int32) ([]int32, error) {
 		buf = make([]int32, 0, m.count(l))
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Int32()
 		if err != nil {
 			return nil, err
@@ -129,8 +129,8 @@ func (m *Message) RepeatedInt64(buf []int64) ([]int64, error) {
 		buf = make([]int64, 0, m.count(l))
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Int64()
 		if err != nil {
 			return nil, err
@@ -164,8 +164,8 @@ func (m *Message) RepeatedUint32(buf []uint32) ([]uint32, error) {
 		buf = make([]uint32, 0, m.count(l))
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Uint32()
 		if err != nil {
 			return nil, err
@@ -199,8 +199,8 @@ func (m *Message) RepeatedUint64(buf []uint64) ([]uint64, error) {
 		buf = make([]uint64, 0, m.count(l))
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Uint64()
 		if err != nil {
 			return nil, err
@@ -234,8 +234,8 @@ func (m *Message) RepeatedSint32(buf []int32) ([]int32, error) {
 		buf = make([]int32, 0, m.count(l))
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Sint32()
 		if err != nil {
 			return nil, err
@@ -269,8 +269,8 @@ func (m *Message) RepeatedSint64(buf []int64) ([]int64, error) {
 		buf = make([]int64, 0, m.count(l))
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Sint64()
 		if err != nil {
 			return nil, err
@@ -304,8 +304,8 @@ func (m *Message) RepeatedFixed32(buf []uint32) ([]uint32, error) {
 		buf = make([]uint32, 0, l/4)
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Fixed32()
 		if err != nil {
 			return nil, err
@@ -339,8 +339,8 @@ func (m *Message) RepeatedFixed64(buf []uint64) ([]uint64, error) {
 		buf = make([]uint64, 0, l/8)
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Fixed64()
 		if err != nil {
 			return nil, err
@@ -374,8 +374,8 @@ func (m *Message) RepeatedSfixed32(buf []int32) ([]int32, error) {
 		buf = make([]int32, 0, l/4)
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Sfixed32()
 		if err != nil {
 			return nil, err
@@ -409,8 +409,8 @@ func (m *Message) RepeatedSfixed64(buf []int64) ([]int64, error) {
 		buf = make([]int64, 0, l/8)
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Sfixed64()
 		if err != nil {
 			return nil, err
@@ -444,8 +444,8 @@ func (m *Message) RepeatedBool(buf []bool) ([]bool, error) {
 		buf = make([]bool, 0, l)
 	}
 
-	postIndex := m.index + l
-	for m.index < postIndex {
+	postIndex := m.Index + l
+	for m.Index < postIndex {
 		v, err := m.Bool()
 		if err != nil {
 			return nil, err

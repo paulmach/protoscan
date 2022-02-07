@@ -669,7 +669,7 @@ func BenchmarkVarint32(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		m.index = 0
+		m.Index = 0
 		_, err := m.Varint32()
 		if err != nil {
 			b.Fatal(err)
@@ -693,7 +693,7 @@ func BenchmarkInt64(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		m.index = 0
+		m.Index = 0
 		_, err := m.Int64()
 		if err != nil {
 			b.Fatal(err)
@@ -717,7 +717,7 @@ func BenchmarkBool(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		m.index = 0
+		m.Index = 0
 		_, err := m.Bool()
 		if err != nil {
 			b.Fatal(err)
