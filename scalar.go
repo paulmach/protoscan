@@ -9,24 +9,24 @@ import (
 // Fixed32 reads a fixed 4 byte value as a uint32. This proto type is
 // more efficient than uint32 if values are often greater than 2^28.
 func (b *base) Fixed32() (uint32, error) {
-	if len(b.data) < b.index+4 {
+	if len(b.Data) < b.Index+4 {
 		return 0, io.ErrUnexpectedEOF
 	}
 
-	v := binary.LittleEndian.Uint32(b.data[b.index:])
-	b.index += 4
+	v := binary.LittleEndian.Uint32(b.Data[b.Index:])
+	b.Index += 4
 	return v, nil
 }
 
 // Fixed64 reads a fixed 8 byte value as an uint64. This proto type is
 // more efficient than uint64 if values are often greater than 2^56.
 func (b *base) Fixed64() (uint64, error) {
-	if len(b.data) < b.index+8 {
+	if len(b.Data) < b.Index+8 {
 		return 0, io.ErrUnexpectedEOF
 	}
 
-	v := binary.LittleEndian.Uint64(b.data[b.index:])
-	b.index += 8
+	v := binary.LittleEndian.Uint64(b.Data[b.Index:])
+	b.Index += 8
 	return v, nil
 }
 
@@ -49,7 +49,7 @@ func (b *base) Varint32() (uint32, error) {
 	var v uint32
 	var err error
 
-	b.index, v, err = varint32(b.data, b.index)
+	b.Index, v, err = varint32(b.Data, b.Index)
 	return v, err
 }
 
@@ -83,7 +83,7 @@ func (b *base) Varint64() (uint64, error) {
 	var v uint64
 	var err error
 
-	b.index, v, err = varint64(b.data, b.index)
+	b.Index, v, err = varint64(b.Data, b.Index)
 	return v, err
 }
 
@@ -129,7 +129,7 @@ func (b *base) Float() (float32, error) {
 func (b *base) Int32() (int32, error) {
 	var v uint64
 	var err error
-	b.index, v, err = varint64(b.data, b.index)
+	b.Index, v, err = varint64(b.Data, b.Index)
 
 	return int32(v), err
 }
@@ -139,7 +139,7 @@ func (b *base) Int32() (int32, error) {
 func (b *base) Int64() (int64, error) {
 	var v uint64
 	var err error
-	b.index, v, err = varint64(b.data, b.index)
+	b.Index, v, err = varint64(b.Data, b.Index)
 
 	return int64(v), err
 }
@@ -149,7 +149,7 @@ func (b *base) Uint32() (uint32, error) {
 	var v uint32
 	var err error
 
-	b.index, v, err = varint32(b.data, b.index)
+	b.Index, v, err = varint32(b.Data, b.Index)
 	return v, err
 }
 
@@ -158,7 +158,7 @@ func (b *base) Uint64() (uint64, error) {
 	var v uint64
 	var err error
 
-	b.index, v, err = varint64(b.data, b.index)
+	b.Index, v, err = varint64(b.Data, b.Index)
 	return v, err
 }
 
@@ -168,7 +168,7 @@ func (b *base) Sint32() (int32, error) {
 	var v uint64
 	var err error
 
-	b.index, v, err = varint64(b.data, b.index)
+	b.Index, v, err = varint64(b.Data, b.Index)
 	return int32(unZig64(v)), err
 }
 
@@ -178,22 +178,22 @@ func (b *base) Sint64() (int64, error) {
 	var v uint64
 	var err error
 
-	b.index, v, err = varint64(b.data, b.index)
+	b.Index, v, err = varint64(b.Data, b.Index)
 	return unZig64(v), err
 }
 
 // Bool is encoded as 0x01 or 0x00 plus the field+type prefix byte. 2 bytes total.
 func (b *base) Bool() (bool, error) {
-	if len(b.data) <= b.index {
+	if len(b.Data) <= b.Index {
 		return false, io.ErrUnexpectedEOF
 	}
-	if d := b.data[b.index]; d&0x80 == 0 {
-		b.index++
+	if d := b.Data[b.Index]; d&0x80 == 0 {
+		b.Index++
 		return d == 1, nil
 	}
 	var v uint64
 	var err error
-	b.index, v, err = varint64(b.data, b.index)
+	b.Index, v, err = varint64(b.Data, b.Index)
 	return v == 1, err
 }
 
@@ -212,8 +212,8 @@ func (m *Message) Bytes() ([]byte, error) {
 		return nil, err
 	}
 
-	b := m.data[m.index : m.index+l]
-	m.index += l
+	b := m.Data[m.Index : m.Index+l]
+	m.Index += l
 	return b, nil
 }
 

@@ -29,8 +29,8 @@ const (
 // base has all the methods for reading packable fields (the numbers) so they
 // can be shared between message and iterator.
 type base struct {
-	data  []byte
-	index int
+	Data  []byte
+	Index int
 }
 
 // Message is a container for a protobuf message type that is ready for scanning.
@@ -46,8 +46,8 @@ type Message struct {
 func New(data []byte) *Message {
 	return &Message{
 		base: base{
-			data:  data,
-			index: 0,
+			Data:  data,
+			Index: 0,
 		},
 	}
 }
@@ -66,7 +66,7 @@ func (m *Message) Next() bool {
 	if m.err != nil {
 		return false
 	}
-	if m.index < len(m.data) {
+	if m.Index < len(m.Data) {
 		val, err := m.Varint64()
 		if err != nil {
 			m.err = err
@@ -104,24 +104,24 @@ func (m *Message) Skip() {
 	case WireTypeVarint:
 		_, m.err = m.Varint64()
 	case WireType64bit:
-		if len(m.data) <= m.index+8 {
+		if len(m.Data) <= m.Index+8 {
 			m.err = io.ErrUnexpectedEOF
 			return
 		}
-		m.index += 8
+		m.Index += 8
 	case WireTypeLengthDelimited:
 		l, err := m.packedLength()
 		if err != nil {
 			m.err = err
 			return
 		}
-		m.index += l
+		m.Index += l
 	case WireType32bit:
-		if len(m.data) <= m.index+4 {
+		if len(m.Data) <= m.Index+4 {
 			m.err = io.ErrUnexpectedEOF
 			return
 		}
-		m.index += 4
+		m.Index += 4
 	}
 }
 
@@ -135,12 +135,12 @@ func (m *Message) Message(msg *Message) (*Message, error) {
 	}
 
 	if msg == nil {
-		msg = New(m.data[m.index : m.index+l])
+		msg = New(m.Data[m.Index : m.Index+l])
 	} else {
-		msg.Reset(m.data[m.index : m.index+l])
+		msg.Reset(m.Data[m.Index : m.Index+l])
 	}
 
-	m.index += l
+	m.Index += l
 	return msg, nil
 }
 
@@ -152,13 +152,13 @@ func (m *Message) MessageData() ([]byte, error) {
 		return nil, err
 	}
 
-	postIndex := m.index + l
-	if len(m.data) < postIndex {
+	postIndex := m.Index + l
+	if len(m.Data) < postIndex {
 		return nil, io.ErrUnexpectedEOF
 	}
 
-	d := m.data[m.index:postIndex]
-	m.index = postIndex
+	d := m.Data[m.Index:postIndex]
+	m.Index = postIndex
 	return d, nil
 }
 
@@ -166,10 +166,10 @@ func (m *Message) MessageData() ([]byte, error) {
 // Optionally pass in new data to reuse the Message object.
 func (m *Message) Reset(newData []byte) {
 	if newData != nil {
-		m.data = newData
+		m.Data = newData
 	}
 	m.err = nil
-	m.index = 0
+	m.Index = 0
 	m.fieldNumber = 0
 	m.wireType = 0
 }
@@ -177,7 +177,7 @@ func (m *Message) Reset(newData []byte) {
 func (m *Message) packedLength() (int, error) {
 	var err error
 	var l64 uint64
-	m.index, l64, err = varint64(m.data, m.index)
+	m.Index, l64, err = varint64(m.Data, m.Index)
 	if err != nil {
 		return 0, err
 	}
@@ -187,13 +187,13 @@ func (m *Message) packedLength() (int, error) {
 		return 0, ErrInvalidLength
 	}
 
-	postIndex := m.index + l
+	postIndex := m.Index + l
 	if postIndex < 0 {
 		// because there could be overflow...
 		return 0, ErrInvalidLength
 	}
 
-	if len(m.data) < postIndex {
+	if len(m.Data) < postIndex {
 		return 0, io.ErrUnexpectedEOF
 	}
 
@@ -202,7 +202,7 @@ func (m *Message) packedLength() (int, error) {
 
 func (m *Message) count(l int) int {
 	var count int
-	for _, b := range m.data[m.index : m.index+l] {
+	for _, b := range m.Data[m.Index : m.Index+l] {
 		if b < 128 {
 			count++
 		}

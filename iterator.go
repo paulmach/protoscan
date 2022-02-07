@@ -22,11 +22,11 @@ func (m *Message) Iterator(iter *Iterator) (*Iterator, error) {
 		iter = &Iterator{}
 	}
 	iter.base = base{
-		data:  m.data[m.index : m.index+l],
-		index: 0,
+		Data:  m.Data[m.Index : m.Index+l],
+		Index: 0,
 	}
 	iter.fieldNumber = m.fieldNumber
-	m.index += l
+	m.Index += l
 
 	return iter, nil
 }
@@ -36,7 +36,7 @@ func (m *Message) Iterator(iter *Iterator) (*Iterator, error) {
 // This method does NOT need to be called, reading a value automatically
 // moves in the index forward. This behavior is different than Message.Next().
 func (i *Iterator) HasNext() bool {
-	return i.base.index < len(i.base.data)
+	return i.base.Index < len(i.base.Data)
 }
 
 // Skip will move the interator forward 'count' value(s) without actually reading it.
@@ -48,17 +48,17 @@ func (i *Iterator) HasNext() bool {
 func (i *Iterator) Skip(wireType int, count int) {
 	if wireType == WireTypeVarint {
 		for j := 0; j < count; j++ {
-			for i.data[i.index] >= 128 {
-				i.index++
+			for i.Data[i.Index] >= 128 {
+				i.Index++
 			}
-			i.index++
+			i.Index++
 		}
 		return
 	} else if wireType == WireType32bit {
-		i.index += 4 * count
+		i.Index += 4 * count
 		return
 	} else if wireType == WireType64bit {
-		i.index += 8 * count
+		i.Index += 8 * count
 		return
 	}
 
@@ -73,7 +73,7 @@ func (i *Iterator) Skip(wireType int, count int) {
 func (i *Iterator) Count(wireType int) int {
 	if wireType == WireTypeVarint {
 		var count int
-		for _, b := range i.data {
+		for _, b := range i.Data {
 			if b < 128 {
 				count++
 			}
@@ -82,10 +82,10 @@ func (i *Iterator) Count(wireType int) int {
 		return count
 	}
 	if wireType == WireType32bit {
-		return len(i.base.data) / 4
+		return len(i.base.Data) / 4
 	}
 	if wireType == WireType64bit {
-		return len(i.base.data) / 8
+		return len(i.base.Data) / 8
 	}
 
 	panic("invalid wire type for a packed repeated field")

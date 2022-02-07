@@ -574,7 +574,7 @@ func BenchmarkRepeatedInt64(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		msg.index = 0
+		msg.Index = 0
 		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 4:
@@ -607,7 +607,7 @@ func BenchmarkIterateInt64(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		msg.index = 0
+		msg.Index = 0
 		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 4:
@@ -650,7 +650,7 @@ func BenchmarkIterateSkip_single(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		msg.index = 0
+		msg.Index = 0
 		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 4:
@@ -690,7 +690,7 @@ func BenchmarkIterateSkip_all(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		msg.index = 0
+		msg.Index = 0
 		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 4:
