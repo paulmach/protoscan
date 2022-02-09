@@ -8,7 +8,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// ExampleCount demonstrates some basics of using the library by counting elements
+// Count demonstrates some basics of using the library by counting elements
 // in a larger customer message without fully decoding it.
 func Example_count() {
 	c := &testmsg.Customer{
