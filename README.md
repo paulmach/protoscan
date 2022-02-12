@@ -258,24 +258,24 @@ To get the raw protobuf data inside a group try something like:
 
 ```go
 var (
-	groupFieldNum = 123
-	groupData []byte
+    groupFieldNum = 123
+    groupData []byte
 )
 
 msg := New(data)
 for msg.Next() {
-	if msg.FieldNumber() == groupFieldNum && msg.WireType() == WireTypeStartGroup {
-		start, end := msg.Index, msg.Index
-		for msg.Next() {
-			msg.Skip()
-			if msg.FieldNumber() == groupFieldNum && msg.WireType() == WireTypeEndGroup {
-				break
-			}
-			end = msg.Index
-		}
-		// groupData would be the raw protobuf encoded bytes of the fields in the group.
-		groupData = msg.Data[start:end]
-	}
+    if msg.FieldNumber() == groupFieldNum && msg.WireType() == WireTypeStartGroup {
+        start, end := msg.Index, msg.Index
+        for msg.Next() {
+            msg.Skip()
+            if msg.FieldNumber() == groupFieldNum && msg.WireType() == WireTypeEndGroup {
+                break
+            }
+            end = msg.Index
+        }
+        // groupData would be the raw protobuf encoded bytes of the fields in the group.
+        groupData = msg.Data[start:end]
+    }
 }
 ```
 
