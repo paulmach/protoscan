@@ -222,6 +222,42 @@ func TestDecodeScalar_bool(t *testing.T) {
 	}
 }
 
+func TestDecodeScalar_boolAsInt64(t *testing.T) {
+	// true value, 1 encoded with some unnecessary leading zeros.
+	msg := New([]byte{0x08, 0x81, 0x00})
+
+	for msg.Next() {
+		if n := msg.FieldNumber(); n != 1 {
+			t.Errorf("incorrect field number: %d != 1", n)
+		}
+
+		v, err := msg.Bool()
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if !v {
+			t.Errorf("incorrect value: %v != true", v)
+		}
+	}
+
+	// is a number other than 1, so should be false
+	msg = New([]byte{0x08, 0x81, 0x0F})
+
+	for msg.Next() {
+		if n := msg.FieldNumber(); n != 1 {
+			t.Errorf("incorrect field number: %d != 1", n)
+		}
+
+		v, err := msg.Bool()
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if v {
+			t.Errorf("incorrect value: %v != true", v)
+		}
+	}
+}
+
 func TestDecodeScalar_string(t *testing.T) {
 	cases := []struct {
 		name    string

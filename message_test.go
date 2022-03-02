@@ -37,6 +37,8 @@ func TestMessage_Message(t *testing.T) {
 		msg := New(data)
 		p := &testmsg.Parent{}
 
+		var gcmsg *Message // for reuse
+
 		for msg.Next() {
 			switch msg.FieldNumber() {
 			case 1:
@@ -55,7 +57,7 @@ func TestMessage_Message(t *testing.T) {
 						}
 						p.Child.Number = &v
 					case 200:
-						gcmsg, err := cmsg.Message(nil)
+						gcmsg, err = cmsg.Message(gcmsg)
 						if err != nil {
 							t.Fatalf("unable to read: %v", err)
 						}
