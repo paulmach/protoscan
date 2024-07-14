@@ -214,7 +214,10 @@ func TestDecodeScalar_bool(t *testing.T) {
 			}
 
 			r := &testmsg.Scalar{}
-			proto.Unmarshal(data, r)
+			err = proto.Unmarshal(data, r)
+			if err != nil {
+				t.Fatalf("unable to unmarshal: %v", err)
+			}
 
 			v := decodeScalar(t, data, 0)
 			compare(t, v, tc.message)
@@ -285,7 +288,10 @@ func TestDecodeScalar_string(t *testing.T) {
 			}
 
 			r := &testmsg.Scalar{}
-			proto.Unmarshal(data, r)
+			err = proto.Unmarshal(data, r)
+			if err != nil {
+				t.Fatalf("unable to unmarshal: %v", err)
+			}
 
 			v := decodeScalar(t, data, 0)
 			compare(t, v, tc.message)
@@ -320,7 +326,10 @@ func TestDecodeScalar_bytes(t *testing.T) {
 			}
 
 			r := &testmsg.Scalar{}
-			proto.Unmarshal(data, r)
+			err = proto.Unmarshal(data, r)
+			if err != nil {
+				t.Fatalf("unable to unmarshal: %v", err)
+			}
 
 			v := decodeScalar(t, data, 0)
 			compare(t, v, tc.message)
@@ -425,7 +434,10 @@ func TestDecodeScalar_skip(t *testing.T) {
 			}
 
 			r := &testmsg.Scalar{}
-			proto.Unmarshal(data, r)
+			err = proto.Unmarshal(data, r)
+			if err != nil {
+				t.Fatalf("unable to unmarshal: %v", err)
+			}
 
 			v := decodeScalar(t, data, tc.skip)
 			compare(t, v, &testmsg.Scalar{After: proto.Bool(true)})
@@ -481,7 +493,10 @@ func TestMessage_Int32(t *testing.T) {
 	}
 
 	r := &testmsg.Scalar{}
-	proto.Unmarshal(data, r)
+	err = proto.Unmarshal(data, r)
+	if err != nil {
+		t.Fatalf("unable to unmarshal: %v", err)
+	}
 
 	msg := New(data)
 
@@ -638,7 +653,7 @@ func compare(t *testing.T, v, expected interface{}) {
 		t.Fatalf("unable to marshal: %v", err)
 	}
 
-	if bytes.Compare(vd, ed) != 0 {
+	if !bytes.Equal(vd, ed) {
 		t.Logf("%v", string(vd))
 		t.Logf("%v", string(ed))
 		t.Errorf("results not equal")
@@ -671,7 +686,10 @@ func BenchmarkScalar_standard(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		r := &testmsg.Scalar{}
-		proto.Unmarshal(data, r)
+		err = proto.Unmarshal(data, r)
+		if err != nil {
+			b.Fatalf("unable to unmarshal: %v", err)
+		}
 	}
 }
 
