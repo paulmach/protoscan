@@ -617,6 +617,11 @@ func BenchmarkIterateInt64(b *testing.B) {
 					b.Fatalf("unable to create iterator: %v", err)
 				}
 
+				c := iter.Count(WireTypeVarint)
+				if c != 100 {
+					b.Errorf("incorrect count, got %v", c)
+				}
+
 				data := make([]int64, 0, iter.Count(WireTypeVarint))
 				for iter.HasNext() {
 					v, err := iter.Int64()
@@ -624,6 +629,10 @@ func BenchmarkIterateInt64(b *testing.B) {
 						b.Fatalf("unable to read: %v", err)
 					}
 					data = append(data, v)
+				}
+
+				if len(data) != 100 {
+					b.Error("incorrect data")
 				}
 			default:
 				msg.Skip()
